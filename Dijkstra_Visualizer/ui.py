@@ -59,20 +59,20 @@ def draw_instructions(surface, font, screen_width):
     """Displays usage instructions."""
     instructions = [
         "Instructions:",
-        "Left Click: Add a node",
-        "Left Click Node -> Left Click Node: Add an edge",
-        "Right Click Node: Select source",
+        "Click empty: add node",
+        "Click 2 nodes: add edge",
+        "Right-click: set source",
         "---",
         "Color Key:",
-        "Orange: Source Node",
-        "Red: Current Node",
-        "Green: Visited Node",
-        "Yellow: Selected for Edge"
+        "Orange: source",
+        "Red: current",
+        "Green: visited",
+        "Yellow: edge start"
     ]
     y_offset = 200
     for line in instructions:
         text_surf = font.render(line, True, COLORS['black'])
-        surface.blit(text_surf, (screen_width - 200, y_offset))
+        surface.blit(text_surf, (screen_width - 220, y_offset))
         y_offset += 25
 
 def get_next_hop(paths, source, dest):

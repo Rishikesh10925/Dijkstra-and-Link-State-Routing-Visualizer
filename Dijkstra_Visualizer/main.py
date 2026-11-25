@@ -65,23 +65,27 @@ def main():
                 
                 # Button Clicks
                 if reset_button_rect.collidepoint(pos):
-                        print("Reset button clicked")
-                        reset_visualization()
-                        continue
-                
-                    if run_button_rect.collidepoint(pos) and source_node and not is_algorithm_running:
-                        print("Run button clicked")
-                        is_algorithm_running = True
-                        adj_list = graph.get_adjacency_list()
-                        dijkstra_iterator = dijkstra_visualizer(adj_list, source_node)
-                
-                    if step_button_rect.collidepoint(pos) and dijkstra_iterator:
-                        print("Step button clicked")
-                        try:
-                            dijkstra_state = next(dijkstra_iterator)
-                        except StopIteration:
-                            dijkstra_iterator = None # Algorithm finished
-                
+                    print("Reset button clicked")
+                    reset_visualization()
+                    continue
+
+                if run_button_rect.collidepoint(pos) and source_node and not is_algorithm_running:
+                    print("Run button clicked")
+                    is_algorithm_running = True
+                    adj_list = graph.get_adjacency_list()
+                    dijkstra_iterator = dijkstra_visualizer(adj_list, source_node)
+
+                if step_button_rect.collidepoint(pos) and dijkstra_iterator:
+                    print("Step button clicked")
+                    try:
+                        dijkstra_state = next(dijkstra_iterator)
+                    except StopIteration:
+                        dijkstra_iterator = None # Algorithm finished
+
+                # Clicks on a button never edit the graph
+                if run_button_rect.collidepoint(pos) or step_button_rect.collidepoint(pos):
+                    continue
+
                 # Graph Interaction
                 clicked_on_node = None
                 for node_id, node_pos in graph.nodes.items():

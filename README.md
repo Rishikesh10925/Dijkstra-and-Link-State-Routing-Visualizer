@@ -1,72 +1,69 @@
-# Dijkstra's Link-State Routing Visualizer
+# Dijkstra & Link-State Routing Visualizer
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python)](https://www.python.org/)
-[![Pygame](https://img.shields.io/badge/Pygame-2.6.1-green?style=for-the-badge&logo=pygame)](https://www.pygame.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](./LICENSE)
+An interactive Pygame tool for stepping through Dijkstra's shortest-path algorithm, the computation every router runs in a link-state protocol such as OSPF. You build a network, then watch it produce the source router's routing table.
 
-This project is an interactive educational tool designed to visualize Dijkstra's shortest path algorithm, demonstrating a core component of link-state routing protocols used in computer networks.
-
-Users can dynamically build their own network topology and watch in real-time as the algorithm discovers the lowest-cost path from a source node to all other nodes. It's an ideal tool for students and enthusiasts looking to gain an intuitive understanding of complex networking concepts.
+![Python](https://img.shields.io/badge/Python-3.8+-3776AB?logo=python&logoColor=white)
+![Pygame](https://img.shields.io/badge/Pygame-2-2E8B57)
 
 <p align="center">
-  <img src="./demo.gif" alt="Animation of the Dijkstra Visualizer in action" width="800"/>
+  <img src="docs/screenshot.png" alt="Completed run from source A: shortest-path tree highlighted and routing table with cost and next hop" width="820">
 </p>
 
-> **Note:** The animation above is a placeholder. The best way to showcase your project is to record a short GIF of it in action and name it `demo.gif`. You can upload it to your repository just like you uploaded the Python files.
-
 ---
 
-## 🚀 Key Features
+## Why
 
--   **Interactive Canvas**: Dynamically create network topologies by adding nodes (routers) and weighted edges (links) with your mouse.
--   **Step-by-Step Execution**: Control the algorithm's pace with a "Step" button to observe each decision it makes.
--   **Real-Time Visualization**: Nodes are color-coded to represent their state (unvisited, visited, current, source), and path costs are updated live on screen.
--   **Shortest Path Tree**: Once complete, the algorithm highlights the final shortest-path tree from the source.
--   **Routing Table Generation**: Automatically generates and displays the final routing table for the source node, showing destinations, total costs, and next hops.
+In link-state routing, every router learns the full topology and runs Dijkstra locally to choose a next hop for each destination. Textbook diagrams show only the final answer. This tool shows each step: which router is being settled, how tentative costs fall, and how the shortest-path tree and forwarding table come out of it.
 
----
+## Features
 
-## 🛠️ Installation & Setup
+- **Build any topology.** Click to place routers (named A, B, C…), click two routers to add a link and type its cost.
+- **Step-by-step execution.** *Run* starts the algorithm and *Step* advances one decision at a time.
+- **Live state.** Nodes are coloured by state (source, current, visited) and their tentative distance is shown underneath.
+- **Shortest-path tree.** The final tree is highlighted on the graph.
+- **Routing table.** Destination, total cost and **next hop** for the source router, derived from the predecessor map.
 
-To get this project running on your local machine, follow these simple steps.
+## How it works
 
-### **Prerequisites**
+| File | Responsibility |
+|---|---|
+| `graph.py` | Undirected weighted graph (node positions plus adjacency) |
+| `dijkstra.py` | Dijkstra with a binary heap (`heapq`), written as a **generator** that yields the algorithm's state after every settle and relaxation, so the UI can pause between steps |
+| `ui.py` | Drawing nodes, edges, buttons and the routing table; the next-hop lookup walks predecessors back to the source |
+| `main.py` | Event loop, interaction state and rendering |
 
--   Python 3.8 or newer
--   Git
+Writing the algorithm as a generator keeps the algorithm and the visualisation separate: `dijkstra.py` has no Pygame code. Complexity is O((V + E) log V).
 
-### **Installation Steps**
+## Getting started
 
-1.  **Clone the Repository**
-    ```sh
-    git clone [https://github.com/YOUR_USERNAME/Dijkstra-Visualizer.git](https://github.com/YOUR_USERNAME/Dijkstra-Visualizer.git)
-    cd Dijkstra-Visualizer
-    ```
-    *(Remember to replace `YOUR_USERNAME` with your actual GitHub username!)*
-
-2.  **Create a Virtual Environment** (Recommended)
-    This keeps your project dependencies isolated.
-    ```sh
-    # For macOS/Linux
-    python3 -m venv venv
-    source venv/bin/activate
-
-    # For Windows
-    python -m venv venv
-    .\venv\Scripts\activate
-    ```
-
-3.  **Install Dependencies**
-    The `requirements.txt` file contains all the necessary Python packages.
-    ```sh
-    pip install -r requirements.txt
-    ```
-
----
-
-## ▶️ How to Run
-
-With the setup complete, start the application by running `main.py`:
-
-```sh
+```bash
+git clone https://github.com/Rishikesh10925/Dijkstra-and-Link-State-Routing-Visualizer.git
+cd Dijkstra-and-Link-State-Routing-Visualizer
+python -m venv venv
+source venv/bin/activate          # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cd Dijkstra_Visualizer
 python main.py
+```
+
+## Controls
+
+| Action | Input |
+|---|---|
+| Add a router | Left-click on empty canvas |
+| Add a link | Left-click a router, then another, then type the cost and press Enter |
+| Set the source router | Right-click a router |
+| Start / advance / clear | **Run**, **Step**, **Reset** buttons |
+
+Colours: orange = source, red = node being settled, green = settled, yellow = first end of a link being drawn.
+
+## Possible extensions
+
+- Show the priority queue contents at each step
+- Save and load topologies
+- Simulate a link failure and the resulting re-convergence
+- Compare with distance-vector routing (Bellman–Ford)
+
+## Author
+
+Built by [Rishikesh](https://github.com/Rishikesh10925).
